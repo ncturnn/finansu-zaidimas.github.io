@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Finansų kelionė</title>
+<style>
+:root{--bg:#faf7f2;--card:#fff;--tx:#1e1b2e;--mu:#6b6880;--pr:#6d3fd9;--ok:#1f9d55;--okb:#e3f6ea;--no:#d63b4b;--nob:#fde8ea;--bd:#e4dfd6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14121f;--card:#1f1c2e;--tx:#f1eefb;--mu:#a9a5c2;--pr:#9a78f5;--ok:#47c97e;--okb:#16301f;--no:#ff6b7a;--nob:#3a1a20;--bd:#342f4a}}
+:root[data-theme="dark"]{--bg:#14121f;--card:#1f1c2e;--tx:#f1eefb;--mu:#a9a5c2;--pr:#9a78f5;--ok:#47c97e;--okb:#16301f;--no:#ff6b7a;--nob:#3a1a20;--bd:#342f4a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+.w{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:30px;margin:8px 0;background:linear-gradient(90deg,#6d3fd9,#f0627f);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:20px;margin:0 0 8px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:20px;margin:14px 0}
+.mu{color:var(--mu);font-size:14px}
+ul{padding-left:20px;margin:8px 0}li{margin:6px 0}
+button{font:inherit;cursor:pointer}
+.b{background:var(--pr);color:#fff;border:0;border-radius:12px;padding:14px 20px;font-weight:600;width:100%;margin-top:12px}
+.o{display:block;width:100%;text-align:left;background:var(--bg);color:var(--tx);border:2px solid var(--bd);border-radius:12px;padding:13px 14px;margin:9px 0}
+.o:disabled{cursor:default}
+.o.ok{border-color:var(--ok);background:var(--okb)}
+.o.no{border-color:var(--no);background:var(--nob)}
+.bar{height:8px;background:var(--bd);border-radius:8px;overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#6d3fd9,#f0627f);transition:width .3s}
+.top{display:flex;justify-content:space-between;font-size:14px;color:var(--mu)}
+.tag{display:inline-block;background:var(--pr);color:#fff;border-radius:20px;padding:3px 12px;font-size:13px;font-weight:600}
+.fb{border-radius:12px;padding:12px 14px;margin-top:12px;font-size:15px}
+.fb.ok{background:var(--okb)}.fb.no{background:var(--nob)}
+.big{font-size:48px;font-weight:800;text-align:center;margin:4px 0}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="w">
+
+<section id="start">
+  <h1>Finansų kelionė</h1>
+  <p class="mu">Edukacinis žaidimas apie finansinę draudimo apsaugą, pinigų srauto kvadrantą ir turtingo žmogaus principą.</p>
+  <div class="c">
+    <h2>Žaidimo taisyklės</h2>
+    <ul>
+      <li>Žaidimą sudaro <b>4 užduotys</b> (lygiai) ir <b>13 klausimų</b>.</li>
+      <li>Kiekvienas klausimas turi vieną teisingą atsakymą.</li>
+      <li>Už teisingą atsakymą gaunamas <b>1 taškas</b>, už neteisingą – 0 taškų.</li>
+      <li>Atsakę pamatysite paaiškinimą, kad išmoktumėte iš klaidų.</li>
+      <li>Pabaigoje gausite savo finansinį rangą.</li>
+    </ul>
+  </div>
+  <div class="c">
+    <h2>Užduočių temos</h2>
+    <ul>
+      <li>1 užduotis: Draudimo pagrindai</li>
+      <li>2 užduotis: Pinigų srauto kvadrantas</li>
+      <li>3 užduotis: Turtingo žmogaus principas</li>
+      <li>4 užduotis: Situacijos iš gyvenimo</li>
+    </ul>
+  </div>
+  <button class="b" onclick="startGame()">Pradėti žaidimą</button>
+</section>
+
+<section id="game" class="hide">
+  <div class="top"><span id="lvl"></span><span id="pts"></span></div>
+  <div class="bar"><i id="bar" style="width:0%"></i></div>
+  <div class="c">
+    <span class="tag" id="tag"></span>
+    <h2 id="q" style="margin-top:12px"></h2>
+    <div id="opts"></div>
+    <div id="fb" class="fb hide"></div>
+    <button class="b hide" id="next" onclick="next()">Toliau</button>
+  </div>
+</section>
+
+<section id="end" class="hide">
+  <h1>Žaidimas baigtas!</h1>
+  <div class="c">
+    <div class="big" id="score"></div>
+    <h2 id="rank" style="text-align:center"></h2>
+    <p class="mu" id="msg" style="text-align:center"></p>
+  </div>
+  <button class="b" onclick="startGame()">Žaisti iš naujo</button>
+</section>
+
+</div>
+<script>
+var K=["Samdomas darbuotojas","Savarankiškai dirbantis","Verslo savininkas","Investuotojas"];
+var A=["Aktyvas","Įsipareigojimas"];
+var L=["1 užduotis: Draudimo pagrindai","2 užduotis: Pinigų srauto kvadrantas","3 užduotis: Turtingo žmogaus principas","4 užduotis: Situacijos iš gyvenimo"];
+var Q=[
+{l:0,q:"Kas yra draudimo įmoka?",o:["Suma, kurią draudikas išmoka po nuostolio","Suma, kurią draudėjas moka draudikui už draudimo apsaugą","Nuostolio dalis, kurią padengia pats draudėjas","Valstybės mokestis už turtą"],a:1,e:"Draudimo įmoka yra kaina, kurią mokate už apsaugą. Tai, ką draudikas sumoka po įvykio, vadinama draudimo išmoka."},
+{l:0,q:"Kas yra franšizė?",o:["Draudimo bendrovės pelnas","Sutarties pabaigos data","Nuostolio dalis, kurią padengia pats draudėjas","Papildoma įmoka už greitesnį aptarnavimą"],a:2,e:"Franšizė yra suma, kurią nuostolio atveju sumokate patys. Likusią dalį padengia draudikas."},
+{l:0,q:"Kada draudikas moka draudimo išmoką?",o:["Kiekvieną mėnesį","Kai įvyksta sutartyje numatytas draudiminis įvykis","Kai draudėjas to panori","Kai pasibaigia sutartis, net jei nieko neįvyko"],a:1,e:"Išmoka mokama tik tada, kai įvyksta draudiminis įvykis, t. y. toks, kuris numatytas draudimo sutartyje."},
+{l:1,q:"Jonas dirba įmonėje ir kiekvieną mėnesį gauna atlyginimą. Kuriam kvadrantui jis priklauso?",o:K,a:0,e:"Kas mėnesį atlyginimą gaunantis žmogus priklauso kvadrantui E (angl. employee) – samdomas darbuotojas."},
+{l:1,q:"Rūta yra laisvai samdoma fotografė. Kai ji nedirba, pajamų negauna. Kuriam kvadrantui ji priklauso?",o:K,a:1,e:"Savarankiškai dirbantis žmogus pats sau yra darbas, todėl tai kvadrantas S (angl. self-employed)."},
+{l:1,q:"Tomas turi įmonę, kurią valdo samdyti vadovai, o pajamas jam kuria verslo sistema. Kuriam kvadrantui jis priklauso?",o:K,a:2,e:"Verslo savininkas (kvadrantas B, angl. business owner) pajamas gauna iš sistemos ir žmonių, o ne vien iš savo laiko."},
+{l:1,q:"Ona gauna dividendus ir nuomos pajamas iš savo turto. Kuriam kvadrantui ji priklauso?",o:K,a:3,e:"Investuotojas (kvadrantas I) leidžia pinigams dirbti už save ir gauna pasyvias pajamas."},
+{l:2,q:"Ką pirmiausia daro turtingas žmogus pagal turtingo žmogaus principą?",o:["Perka įsipareigojimus, kad atrodytų turtingas","Perka aktyvus, kurie generuoja pinigų srautą","Visus pinigus išleidžia vartojimui","Vengia bet kokių investicijų"],a:1,e:"Turtingi žmonės pirmiausia kuria ir perka aktyvus, o jų uždirbtais pinigais vėliau finansuoja savo norus."},
+{l:2,q:"Butas, kurį nuomojate ir gaunate nuomos pajamas, yra:",o:A,a:0,e:"Aktyvas deda pinigus į jūsų kišenę. Nuomojamas butas kuria pinigų srautą, todėl tai aktyvas."},
+{l:2,q:"Brangus automobilis, pirktas išsimokėtinai, kuris neuždirba pinigų, yra:",o:A,a:1,e:"Įsipareigojimas ima pinigus iš jūsų kišenės: reikia mokėti įmokas, draudimą, degalus ir remontą."},
+{l:3,q:"Gavote 1000 € premiją. Kaip pasielgtumėte pagal turtingo žmogaus principą?",o:["Išleisčiau viską naujiems daiktams","Laikyčiau visus pinigus namuose","Dalį atidėčiau ir investuočiau į aktyvą, kuris uždirbtų pinigų","Paimčiau kreditą dar didesniam pirkiniui"],a:2,e:"Turtingas žmogus pinigus nukreipia į aktyvus, kurie ilgainiui uždirba daugiau pinigų."},
+{l:3,q:"Jūsų pajamos priklauso tik nuo jūsų darbo valandų. Kuria kryptimi kvadrante verta judėti siekiant finansinės laisvės?",o:["Likti S ir dirbti dar daugiau","Tik link E, nes tai saugiausia","Link B ir I, kur pinigai dirba už jus","Kvadranto keisti negalima"],a:2,e:"Finansinės laisvės siekiama judant iš kairės pusės (E ir S) į dešinę (B ir I), kur pajamos nebepriklauso vien nuo jūsų laiko."},
+{l:3,q:"Šeima nori apsaugoti namus nuo didelių nuostolių gaisro atveju. Ką jai verta daryti?",o:["Nieko ir tikėtis, kad gaisro nebus","Apsidrausti, taip rizika perduodama draudikui už įmoką","Pirkti daugiau baldų","Paimti vartojimo paskolą"],a:1,e:"Draudimas leidžia nedidelėmis reguliariomis įmokomis apsisaugoti nuo didelio, netikėto nuostolio."}
+];
+var i=0,s=0,done=false;
+function $(x){return document.getElementById(x)}
+function startGame(){i=0;s=0;$("start").classList.add("hide");$("end").classList.add("hide");$("game").classList.remove("hide");show()}
+function show(){
+  var d=Q[i];done=false;
+  $("lvl").textContent="Klausimas "+(i+1)+" iš "+Q.length;
+  $("pts").textContent="Taškai: "+s;
+  $("bar").style.width=(i/Q.length*100)+"%";
+  $("tag").textContent=L[d.l];
+  $("q").textContent=d.q;
+  $("fb").classList.add("hide");$("next").classList.add("hide");
+  var h=$("opts");h.innerHTML="";
+  d.o.forEach(function(t,n){var b=document.createElement("button");b.className="o";b.textContent=t;b.onclick=function(){pick(n)};h.appendChild(b)});
+}
+function pick(n){
+  if(done)return;done=true;
+  var d=Q[i],bs=document.querySelectorAll(".o"),f=$("fb"),good=n===d.a;
+  bs.forEach(function(b,k){b.disabled=true;if(k===d.a)b.classList.add("ok");else if(k===n)b.classList.add("no")});
+  if(good)s++;
+  $("pts").textContent="Taškai: "+s;
+  f.className="fb "+(good?"ok":"no");
+  f.textContent=(good?"Teisingai! ":"Neteisingai. ")+d.e;
+  $("next").textContent=i===Q.length-1?"Pamatyti rezultatą":"Toliau";
+  $("next").classList.remove("hide");
+}
+function next(){i++;if(i>=Q.length)finish();else show()}
+function finish(){
+  $("game").classList.add("hide");$("end").classList.remove("hide");
+  $("score").textContent=s+" / "+Q.length;
+  var r,m;
+  if(s===Q.length){r="Finansų meistras";m="Puikus rezultatas! Atsakėte teisingai į visus klausimus."}
+  else if(s>=10){r="Finansų žinovas";m="Labai gerai! Gerai išmanote finansų pagrindus."}
+  else if(s>=6){r="Finansų mokinys";m="Neblogai! Dar šiek tiek pasimokę tapsite žinovu."}
+  else{r="Pradedantysis";m="Gera pradžia! Pabandykite žaisti dar kartą ir perskaitykite paaiškinimus."}
+  $("rank").textContent=r;$("msg").textContent=m;
+}
+</script>
+</body>
+</html>
